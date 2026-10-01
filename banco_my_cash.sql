@@ -25,7 +25,7 @@ CREATE TABLE administradores (
     id_admin INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
 
     CONSTRAINT uq_admin_email
@@ -349,12 +349,12 @@ USE my_cash;
 -- PASSO 1: CRIAR O ACESSO DO ADMINISTRADOR
 -- -------------------------------------------------------------------------
 -- O sistema precisa de alguém para operar. Vamos criar o utilizador padrão.
--- O e-mail será 'admin@gmail.com' e a senha será '123' (já em hash seguro).
-INSERT INTO administradores (nome, email, senha_hash, ativo)
+
+INSERT INTO administradores (nome, email, senha, ativo)
 VALUES (
     'admin', 
     'admin@gmail.com', 
-    '$2y$10$UoE2Y7Hh4Y/Q1a7R6w0d9.e.M0rF9lQy3e/q6I9m8W/u1c9x7eW', 
+    '123', 
     TRUE
 );
 
