@@ -1,3 +1,4 @@
+
 <?php
 // actions/atualizar_perfil.php
 
@@ -42,9 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception("As novas senhas não coincidem.");
             }
             
-            $hash = password_hash($nova_senha, PASSWORD_DEFAULT);
-            $stmtUpdate = $pdo->prepare("UPDATE administradores SET nome = :nome, email = :email, senha_hash = :hash WHERE id_admin = :id");
-            $stmtUpdate->execute(['nome' => $nome, 'email' => $email, 'hash' => $hash, 'id' => $id_admin]);
+            $stmtUpdate = $pdo->prepare("UPDATE administradores SET nome = :nome, email = :email, senha = :senha WHERE id_admin = :id");
+            $stmtUpdate->execute(['nome' => $nome, 'email' => $email, 'senha' => $nova_senha, 'id' => $id_admin]);
         } 
         else {
             $stmtUpdate = $pdo->prepare("UPDATE administradores SET nome = :nome, email = :email WHERE id_admin = :id");
@@ -67,3 +67,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+

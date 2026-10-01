@@ -67,21 +67,16 @@ function criarAdministrador(string $nome, string $email, string $senha): int
         throw new DomainException('Ja existe um administrador com este e-mail.');
     }
 
-    $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
-    if ($senhaHash === false) {
-        throw new RuntimeException('Nao foi possivel proteger a senha.');
-    }
-
     $sql = '
-        INSERT INTO administradores (nome, email, senha_hash)
-        VALUES (:nome, :email, :senha_hash)
+        INSERT INTO administradores (nome, email, senha)
+        VALUES (:nome, :email, :senha)
     ';
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         ':nome' => $nome,
         ':email' => $email,
-        ':senha_hash' => $senhaHash,
+        ':senha' => $senha,
     ]);
 
     return (int) $pdo->lastInsertId();
@@ -165,20 +160,15 @@ function alterarSenhaAdministrador(int $idAdmin, string $novaSenha): int
 
     validarSenhaAdministrador($novaSenha);
 
-    $senhaHash = password_hash($novaSenha, PASSWORD_DEFAULT);
-    if ($senhaHash === false) {
-        throw new RuntimeException('Nao foi possivel proteger a senha.');
-    }
-
     $sql = '
         UPDATE administradores
-        SET senha_hash = :senha_hash
+        SET senha = :senha
         WHERE id_admin = :id_admin
     ';
 
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
-        ':senha_hash' => $senhaHash,
+        ':senha' => $novaSenha,
         ':id_admin' => $idAdmin,
     ]);
 
@@ -190,7 +180,7 @@ function buscarAdministradorParaLogin(string $email): ?array
     global $pdo;
  
     $sql = '
-        SELECT id_admin, nome, email, senha_hash
+        SELECT id_admin, nome, email, senha
         FROM administradores
         WHERE email = :email
         LIMIT 1
@@ -213,14 +203,10 @@ function autenticarAdministrador(string $email, string $senha): ?array
         return null;
     }
  
-    if (!password_verify($senha, $administrador['senha_hash'])) {
+    if ($senha !== $administrador['senha']) {
         return null;
     }
  
-    if (password_needs_rehash($administrador['senha_hash'], PASSWORD_DEFAULT)) {
-        alterarSenhaAdministrador((int) $administrador['id_admin'], $senha);
-    }
- 
-    unset($administrador['senha_hash']);
+    unset($administrador['senha']);
     return $administrador;
 }
